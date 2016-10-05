@@ -15,18 +15,30 @@
  */
 package org.owasp.esapi.reference;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
 import org.apache.commons.lang.text.StrTokenizer;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.configuration.EsapiPropertyManager;
 import org.owasp.esapi.errors.ConfigurationException;
-
-import java.io.*;
-import java.net.URL;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
+import org.slf4j.LoggerFactory;
 
 /**
  * The reference {@code SecurityConfiguration} manages all the settings used by the ESAPI in a single place. In this reference
@@ -59,6 +71,7 @@ import java.util.regex.PatternSyntaxException;
 
 public class DefaultSecurityConfiguration implements SecurityConfiguration {
     private static volatile SecurityConfiguration instance = null;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(DefaultSecurityConfiguration.class);
 
     public static SecurityConfiguration getInstance() {
         if ( instance == null ) {
@@ -685,33 +698,34 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 		return result;
 	}
 
-    /**
-     * Used to log errors to the console during the loading of the properties file itself. Can't use
-     * standard logging in this case, since the Logger may not be initialized yet. Output is sent to
-     * {@code PrintStream} {@code System.out}.
-     *
-     * @param message The message to send to the console.
-     * @param e The error that occurred. (This value printed via {@code e.toString()}.)
-     */
-    private void logSpecial(String message, Throwable e) {
-    	StringBuffer msg = new StringBuffer(message);
-    	if (e != null) {
-    		msg.append(" Exception was: ").append( e.toString() );
-    	}
-		System.out.println( msg.toString() );
-		// if ( e != null) e.printStackTrace();		// TODO ??? Do we want this?
-    }
+	/**
+	 * Used to log errors to the console during the loading of the properties
+	 * file itself. Can't use standard logging in this case, since the Logger
+	 * may not be initialized yet. Output is sent to {@code PrintStream}
+	 * {@code System.out}.
+	 *
+	 * @param message
+	 *            The message to send to the console.
+	 * @param e
+	 *            The error that occurred. (This value printed via
+	 *            {@code e.toString()}.)
+	 */
+	private void logSpecial(String message, Throwable e) {
+		logger.info(message, e);
+	}
 
-    /**
-     * Used to log errors to the console during the loading of the properties file itself. Can't use
-     * standard logging in this case, since the Logger may not be initialized yet. Output is sent to
-     * {@code PrintStream} {@code System.out}.
-     *
-     * @param message The message to send to the console.
-     */
-    private void logSpecial(String message) {
-		System.out.println(message);
-    }
+	/**
+	 * Used to log errors to the console during the loading of the properties
+	 * file itself. Can't use standard logging in this case, since the Logger
+	 * may not be initialized yet. Output is sent to {@code PrintStream}
+	 * {@code System.out}.
+	 *
+	 * @param message
+	 *            The message to send to the console.
+	 */
+	private void logSpecial(String message) {
+		logger.info(message);
+	}
     
     /**
 	 * {@inheritDoc}
